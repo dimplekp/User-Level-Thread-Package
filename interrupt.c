@@ -6,6 +6,10 @@
 #include <ucontext.h>
 #include <unistd.h>
 #include "interrupt.h"
+#include "ULT.h"
+
+#define UNUSED(x) (void)(x)
+
 static const int SIGNAL_TYPE = SIGALRM;
 
 static void setAlarm();
@@ -92,13 +96,17 @@ registerHandler()
  * STUB: once registerhandler is called, this routine
  * gets called each time SIGNAL_TYPE is sent to this process
  */
+// sig - signal number, *sip - pointer to siginfo_t, contextVP - context
 void 
 interruptHandler(int sig, siginfo_t *sip, void *contextVP)
 {
 
   /* Tell compiler not to complain about unused variable
-     in this stub version of the fuction */
-  /*NOTUSED*/
+     in this stub version of the fuction 
+  */
+  UNUSED(sig);
+  UNUSED(sip);
+
   ucontext_t *context = (ucontext_t *)contextVP;
 
   /*
@@ -115,11 +123,10 @@ interruptHandler(int sig, siginfo_t *sip, void *contextVP)
   }
   setAlarm();
 
-
-  /* 
-   * Your code here 
-   */
-
+  interruptsOff();
+  ULT_Yield(ULT_ANY);
+  interruptsOn();
+  
   return;
 }
  

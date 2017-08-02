@@ -51,7 +51,6 @@ void basicThreadTests()
   assert(ret == ULT_INVALID);
   printf("Initial thread returns from Yield(INVALID)\n");
   ret = ULT_Yield(16);
-  printf("ret is %d\n", ret);
   assert(ret == ULT_INVALID);
   printf("Initial thread returns from Yield(INVALID2)\n");
   /*
@@ -124,6 +123,7 @@ void basicThreadTests()
   printf("Creating %d threads\n", ULT_MAX_THREADS-1);
   for(ii = 0; ii < ULT_MAX_THREADS-1; ii++){
     ret = ULT_CreateThread((void (*)(void *))fact, (void *)10);
+    printf("ret : %d\n", ret);
     assert(ULT_isOKRet(ret));
   }
   /*
@@ -134,7 +134,7 @@ void basicThreadTests()
   for(ii = 0; ii < ULT_MAX_THREADS; ii+=2){
     ret = ULT_DestroyThread(ULT_ANY);
     assert(ULT_isOKRet(ret));
-  }
+  } 
   for(ii = 0; ii < ULT_MAX_THREADS; ii++){
     ret = ULT_Yield(ii);
   }
@@ -319,6 +319,7 @@ static void
 startAlarmHelper()
 {
   int ret;
+  UNUSED(ret);
   char command[1024];
 
   pid_t myPid = getpid();

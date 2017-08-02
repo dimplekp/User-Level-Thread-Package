@@ -1,13 +1,3 @@
-/* 
-/ Authors: Janek Lehr and Nick Blazier
-/ February 10th, 2012
-/ This is a basic thread library for user level threads. It has three main funtionalities:
-/ -Create a thread
-/ -Yield to a thread
-/ -Destroy a thread.
-*/
-
-
 #include <assert.h>
 #include <stdio.h>
 
@@ -18,6 +8,7 @@
 #include <stdlib.h>
 #include <ucontext.h>
 #include "ULT.h"
+#include "interrupt.h"
 
 Tid ULT_DestroyThread(Tid tid);
 int isValidTid(Tid toTest);
@@ -97,6 +88,9 @@ int initializeFirstThread()
 
 Tid ULT_CreateThread(void (*fn)(void *), void *parg)
 {
+	// printf("IN CREATE ......\n");
+	// interruptsOff();
+
 	if(isFirstThread)
 		initializeFirstThread();
 
@@ -124,12 +118,16 @@ Tid ULT_CreateThread(void (*fn)(void *), void *parg)
 	readyQueue[threadCount] = newThread;
 	threadCount++;
 
+	// interruptsOn();
+
 	return newThread->threadID;
 }
 
 
 Tid ULT_Yield(Tid wantTid)
 {
+	// printf("YIELDING ......\n");
+	// interruptsOff();
 	// Success - ULT_ANY(any from the ready queue), ULT_SELF(caller)
   // Failure - ULT_INVALID(tid does not correspond to a valid thread),
   //                     ULT_NONE(there are no more threads (other than the caller) available to run (in response to a call with tid set to ULT_SELF)
@@ -182,6 +180,7 @@ Tid ULT_Yield(Tid wantTid)
 		runningThread = nextThread;
 		setcontext(runningThread->context);
 	}
+	// interruptsOn();
 	return nextThread->threadID;
 }
 
@@ -189,6 +188,8 @@ Tid ULT_Yield(Tid wantTid)
 // returns the Tid of the thread that was destroyed.
 Tid ULT_DestroyThread(Tid tid)
 { 
+	// printf("ready queue size : %d\n", threadCount);
+	// interruptsOff();
 	// Possible arguments - tid, ULT_ANY(destroy any thread except the caller),
   //                                             ULT_SELF(destroy the caller; The function obviously does not return in this case. Instead, some other ready thread gets scheduled.)
   // Success - TID
@@ -230,6 +231,7 @@ Tid ULT_DestroyThread(Tid tid)
 	Tid ret = deleteThread->threadID;
 	free(deleteThread->context);
 	free(deleteThread);
+	// interruptsOn();
 	return ret;
 
 	/*

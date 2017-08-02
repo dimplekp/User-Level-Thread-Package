@@ -6,6 +6,7 @@ typedef int Tid;
 #define ULT_MAX_THREADS 1024
 #define ULT_MIN_STACK 32768
 
+#define UNUSED(x) (void)(x)
 
 // The thread control block that will make up the elements of the readyQueue.
 typedef struct ThrdCtlBlk{
@@ -33,7 +34,7 @@ static const Tid ULT_ORIG = 0;
 struct Node *head;
 
 ThrdCtlBlk *runningThread;
-ThrdCtlBlk *readyQueue[ULT_MAX_THREADS];
+extern ThrdCtlBlk *readyQueue[ULT_MAX_THREADS];
 int readySize;
 
 
