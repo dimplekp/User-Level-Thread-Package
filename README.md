@@ -2,4 +2,5 @@
 
 Pre-emptive user level thread library
 
-A file sharing system similar to BitTorrent in Java. The system uses a centralized index (CI) which has information about the files each peer the network has. Rather than using this centralized server for downloading RFCs, build a P2P-CI system in which peers who wish to download a file can download from another active peer who already has it. All communication among peers, or between a peer and the server, takes place over TCP.
+Built a preemptive user-level thread library in C that has functions to create threads, destroy threads, and yield threads to control the scheduling underneath. Used context switching for saving and restoring the the thread state for thread preemption (manipulated the fields in the saved ucontext_t directly without using makecontext). Created a program that creates and destroys threads using this library and uses POSIX signals that cause the scheduler to switch from one thread to another.
+
